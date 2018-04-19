@@ -33,9 +33,12 @@ export OCI_BASE_TAG=3.7
 export OCI_NAME=${1:-oci-jupyter-base}
 export OCI_TAG=$(date --utc +%Y%m%d)
 
-export BUILDAH="sudo buildah"
+export OCI_DISTRIB_ID=alpine
+export OCI_DISTRIB_CODENAME=3.7
 
-source ./bob/scripts/${OCI_BASE_NAME}/${OCI_BASE_TAG}/common-setup.sh
+export BUILDAH="sudo $(which buildah)"
+
+source ./bob/scripts/${OCI_BASE_NAME}/${OCI_BASE_TAG}/setup.sh
 
 #
 # Fetch the base image in OCI format
@@ -50,7 +53,7 @@ ${BUILDAH} run ${OCI_NAME} -- mkdir /bob
 
 # Copy ${OCI_BASE_NAME}/${OCI_BASE_TAG} scripts and artifacts
 ${BUILDAH} copy ${OCI_NAME} \
-                "./scripts/${OCI_BASE_NAME}/${OCI_BASE_TAG}/" \
+                "./bob/scripts/${OCI_BASE_NAME}/${OCI_BASE_TAG}/" \
                 '/bob'
 
 # Run build scripts

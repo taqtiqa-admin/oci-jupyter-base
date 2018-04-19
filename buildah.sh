@@ -38,7 +38,7 @@ export OCI_DISTRIB_CODENAME=3.7
 
 export BUILDAH="sudo $(which buildah)"
 
-source ./bob/scripts/${OCI_BASE_NAME}/${OCI_BASE_TAG}/setup.sh
+source ./bob/scripts/${OCI_DISTRIB_ID}/${OCI_DISTRIB_CODENAME}/setup.sh
 
 #
 # Fetch the base image in OCI format

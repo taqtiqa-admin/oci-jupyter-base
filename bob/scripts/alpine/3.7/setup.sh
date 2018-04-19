@@ -40,7 +40,7 @@ then
   for f in /etc/profile.d/*; do source $f; done
 
 else
-  source ./bob/${OCI_DISTRIB_ID}/${OCI_DISTRIB_CODENAME}/common-setup.sh
+  source ./bob/scripts/${OCI_DISTRIB_ID}/${OCI_DISTRIB_CODENAME}/common-setup.sh
 fi
 
 # source ./bob/bob.sh

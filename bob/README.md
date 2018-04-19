@@ -32,6 +32,32 @@ If you change the directories/files you would like checked out from Bob:
 
 ### New repository
 **WARNING: INCOMPLETE-DO-NOT-BLINDLY-APPLY**
+**NOTE:** Requires git version > 2.12
+````bash
+sudo add-apt-repository ppa:git-core/ppa
+sudo apt-get update
+sudo apt-get install git
+````
+
+To add bob (squashes all commits, like a `git clone --depth=1 ...` ):
+````bash
+BOB_REPO=jupyter-base
+BOB_DIST=alpine
+BOB_DIST_RELEASE=3.7
+
+cd ${BOB_REPO}
+git init
+git remote add origin https://your.origin/repo/here.git
+## Make and commit a change before adding subtree
+git subtree add --prefix bob https://github.com/taqtiqa/bob.git master --squash
+````
+
+To update bob:
+````bash
+git subtree pull --prefix bob https://github.com/taqtiqa/bob.git master --squash
+````
+
+Using submodules is more intricate:
 ````bash
 BOB_REPO=oci-jupyter-base
 BOB_DIST=alpine
@@ -40,38 +66,46 @@ BOB_DIST_RELEASE=3.7
 mkdir ${BOB_REPO} 
 cd ${BOB_REPO}
 git init
-git checkout -b bob-master
-git remote add bob https://github.com/taqtiqa/bob.git
-git branch --set-upstream-to=bob/master
-git config core.sparsecheckout true
-echo scripts/${BOB_DIST}/${BOB_DIST_RELEASE}/ >> .git/info/sparse-checkout
-echo another/sub/tree >> .git/info/sparse-checkout
-git --depth=1 pull bob master
-
+git remote add origin https://your.origin/repo/here.git
+git clone --depth=1 --no-checkout https://github.com/taqtiqa/bob.git bob
+git submodule add https://github.com/taqtiqa/bob.git bob
+git submodule absorbgitdirs
+git -C bob config core.sparseCheckout true
+echo 'scripts/${BOB_DIST}/${BOB_DIST_RELEASE}/*' >>.git/modules/bob/info/sparse-checkout
+git submodule update --force --checkout bob
 ````
 
 ### Existing repository
 **WARNING: INCOMPLETE-DO-NOT-BLINDLY-APPLY**
+**NOTE:** Requires git version > 2.12
 ````bash
 BOB_REPO=jupyter-base
 BOB_DIST=alpine
 BOB_DIST_RELEASE=3.7
 
 cd ${BOB_REPO}
-# create new branch
-git checkout --orphan bob-master
-rm -rf ./
-rm .gitignore
-#git rm --cached ./*
-git remote add bob https://github.com/taqtiqa/bob.git
-git branch --set-upstream-to=bob/master bob
-git config core.sparsecheckout true
-echo scripts/${BOB_DIST}/${BOB_DIST_RELEASE}/ >> .git/info/sparse-checkout
-git pull --depth 1 bob master
-git checkout master
-git merge bob-master
-echo scripts >>.gitignore
+git clone --depth=1 --no-checkout https://github.com/taqtiqa/bob.git bob
+git submodule add https://github.com/taqtiqa/bob.git bob
+git submodule absorbgitdirs
+git -C bob config core.sparseCheckout true
+echo 'scripts/${BOB_DIST}/${BOB_DIST_RELEASE}/*' >>.git/modules/bob/info/sparse-checkout
+git submodule update --force --checkout bob
 ```` 
+
+To add bob:
+````bash
+BOB_REPO=jupyter-base
+BOB_DIST=alpine
+BOB_DIST_RELEASE=3.7
+
+cd ${BOB_REPO}
+git subtree add --prefix bob https://github.com/taqtiqa/bob.git master --squash
+````
+
+To update bob:
+````bash
+git subtree pull --prefix bob https://github.com/taqtiqa/bob.git master --squash
+````
 
 # License
 

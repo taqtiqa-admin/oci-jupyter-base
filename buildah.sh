@@ -35,7 +35,7 @@ export OCI_TAG=$(date --utc +%Y%m%d)
 
 export BUILDAH="sudo buildah"
 
-source bob/scripts/${OCI_BASE_NAME}/${OCI_BASE_TAG}/common-setup.sh
+source ./bob/scripts/${OCI_BASE_NAME}/${OCI_BASE_TAG}/common-setup.sh
 
 #
 # Fetch the base image in OCI format
@@ -43,7 +43,6 @@ source bob/scripts/${OCI_BASE_NAME}/${OCI_BASE_TAG}/common-setup.sh
 ${BUILDAH} rm ${OCI_NAME}
 ${BUILDAH} rmi ${OCI_NAME}
 ${BUILDAH} from --name ${OCI_NAME} docker://${OCI_BASE_NAME}:${OCI_BASE_TAG}
-#${BUILDAH} from --name ${OCI_NAME} oci:${OCI_BASE_NAME}:${OCI_BASE_TAG}
 
 # ${BUILDAH} run --tty ${OCI_NAME} /bin/sh
 

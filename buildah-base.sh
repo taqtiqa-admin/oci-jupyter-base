@@ -30,9 +30,19 @@
 
 export OCI_NAME=${1:-oci-jupyter-base}
 export OCI_AUTHOR="TAQTIQA LLC <coders@taqtiqa.com>"
-export OCI_TAG=$(date --utc +%Y%m%d)
+export OCI_TAG=$(date --utc +%Y%m%d.%H)
 export OCI_BASE_NAME=alpine
 export OCI_BASE_TAG=3.7
+
+export OCI_USER=jovyan
+export OCI_USER_ID=1000
+export OCI_USER_GROUP_ID=100
+
+export OCI_ORG=taqtiqa.io
+export OCI_AUTHOR='TAQTIQA LLC'
+export OCI_EMAIL='coders@taqtiqa.com'
+export OCI_ARCH='amd64'
+export OCI_OS='linux'
 
 export OCI_DISTRIB_ID=alpine
 export OCI_DISTRIB_CODENAME=3.7
@@ -50,7 +60,7 @@ source ./scripts/buildah-import.sh
 
 echo "############################################"
 echo "##"
-echo "## Buildah ${OCI_NAME}"
+echo "## Buildah building ${OCI_NAME}"
 echo "##"
 echo "############################################"
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/setup.sh
@@ -68,3 +78,4 @@ ${BUILDAH} config --author="${OCI_AUTHOR}" \
         --entrypoint="/usr/local/bin/start.sh jupyter lab" ${OCI_NAME}
 
 source ./scripts/buildah-export.sh
+

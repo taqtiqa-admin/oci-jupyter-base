@@ -25,17 +25,17 @@ OCI_CID=$(${BUILDAH} commit ${OCI_NAME} ${OCI_NAME}) #add -rm in production
 
 echo "############################################"
 echo "##"
-echo "## Buildah push ${OCI_NAME} oci-archive:${OCI_NAME}.oci:${OCI_TAG}"
+echo "## Buildah push ${OCI_NAME} oci-archive:${OCI_NAME}-${OCI_TAG}.oci:${OCI_TAG}"
 echo "##"
 echo "############################################"
-OCI_ID=$(${BUILDAH} push ${OCI_NAME} oci-archive:${OCI_NAME}.oci:${OCI_TAG})
+OCI_ID=$(${BUILDAH} push ${OCI_NAME} oci-archive:${OCI_NAME}-${OCI_TAG}.oci:${OCI_TAG})
 
 echo "############################################"
 echo "##"
-echo "## Buildah push ${OCI_NAME} docker-archive:${OCI_NAME}.docker:${OCI_NAME}"
+echo "## Buildah push ${OCI_NAME} docker-archive:${OCI_NAME}-${OCI_TAG}.docker:${OCI_NAME}"
 echo "##"
 echo "############################################"
-DKR_ID=$(${BUILDAH} push ${OCI_NAME} docker-archive:${OCI_NAME}.docker:${OCI_NAME})
+DKR_ID=$(${BUILDAH} push ${OCI_NAME} docker-archive:${OCI_NAME}-${OCI_TAG}.docker:${OCI_NAME})
 
 
 # upload to docker hub:
@@ -64,17 +64,16 @@ cat <<EOF >${HOME}/.docker/config.json
 }
 EOF
 
-# Make files readable to skopeo, rkt actool
-chown $(whoami) ${OCI_NAME}.oci
-chown $(whoami) ${OCI_NAME}.docker
+# Make files readable to skopeo and rkt
+chown $(whoami) ${OCI_NAME}-${OCI_TAG}.oci
+chown $(whoami) ${OCI_NAME}-${OCI_TAG}.docker
 
 echo "############################################"
 echo "##"
-echo "## Skopeo Copy FROM: docker-archive:${OCI_NAME}.docker TO docker://${DOCKER_ORG}/${OCI_NAME}:${OCI_TAG}"
+echo "## Skopeo Copy FROM: docker-archive:${OCI_NAME}-${OCI_TAG}.docker TO docker://${DOCKER_ORG}/${OCI_NAME}:${OCI_TAG}"
 echo "##"
 echo "############################################"
-
-${SKOPEO} copy docker-archive:${OCI_NAME}.docker docker://${DOCKER_ORG}/${OCI_NAME}:${OCI_TAG}
+${SKOPEO} copy docker-archive:${OCI_NAME}-${OCI_TAG}.docker docker://${DOCKER_ORG}/${OCI_NAME}:${OCI_TAG}
 
 echo "############################################"
 echo "##"
@@ -91,7 +90,8 @@ echo "##"
 echo "############################################"
 ${RKT} image export ${RKT_IMAGE_NAME} ${OCI_NAME}-${OCI_TAG}.aci
 
-chown $(whoami) ${OCI_NAME}.aci
+# Make files readable to actool
+chown $(whoami) ${OCI_NAME}-${OCI_TAG}.aci
 
 echo "############################################"
 echo "##"
@@ -105,6 +105,6 @@ ${ACTOOL} --debug validate ${OCI_NAME}-${OCI_TAG}.aci
 # - Docker
 # - Rkt (ACI)
 
-# rm ${OCI_NAME}.aci
-# rm ${OCI_NAME}.docker
-# rm ${OCI_NAME}.oci
+# rm ${OCI_NAME}-${OCI_TAG}.aci
+# rm ${OCI_NAME}-${OCI_TAG}.docker
+# rm ${OCI_NAME}-${OCI_TAG}.oci

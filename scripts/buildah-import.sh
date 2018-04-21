@@ -27,8 +27,6 @@ echo "##"
 echo "## Skopeo Copy FROM: docker://${OCI_BASE_NAME}:${OCI_BASE_TAG}  TO oci:${OCI_BASE_NAME}-${OCI_BASE_TAG}:${OCI_BASE_TAG}"
 echo "##"
 echo "############################################"
-
-
 ${SKOPEO} copy docker://${OCI_BASE_NAME}:${OCI_BASE_TAG} oci:${OCI_BASE_NAME}-${OCI_BASE_TAG}:${OCI_BASE_TAG}
 tar cf ${OCI_BASE_NAME}-${OCI_BASE_TAG}.oci -C ${OCI_BASE_NAME}-${OCI_BASE_TAG} .
 rm -rf ${OCI_BASE_NAME}-${OCI_BASE_TAG}

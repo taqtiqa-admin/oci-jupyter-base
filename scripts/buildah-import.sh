@@ -24,20 +24,31 @@ source ./bob/scripts/${OCI_DISTRIB_ID}/${OCI_DISTRIB_CODENAME}/setup.sh
 # 
 echo "############################################"
 echo "##"
-echo "## Skopeo Copy FROM: docker://${OCI_BASE_NAME}:${OCI_BASE_TAG}  TO oci:${OCI_BASE_NAME}-${OCI_BASE_TAG}:${OCI_BASE_TAG}"
+echo "## Skopeo Copy FROM: docker://${DOCKER_ORG}/${OCI_BASE_NAME}:${OCI_BASE_TAG}  TO oci:${OCI_BASE_NAME}-${OCI_BASE_TAG}:${OCI_BASE_TAG}"
 echo "##"
 echo "############################################"
-${SKOPEO} copy docker://${OCI_BASE_NAME}:${OCI_BASE_TAG} oci:${OCI_BASE_NAME}-${OCI_BASE_TAG}:${OCI_BASE_TAG}
+rm -f ${OCI_BASE_NAME}-${OCI_BASE_TAG}
+rm -f ${OCI_BASE_NAME}-${OCI_BASE_TAG}.oci
+${SKOPEO} copy docker://${DOCKER_ORG}/${OCI_BASE_NAME}:${OCI_BASE_TAG} oci:${OCI_BASE_NAME}-${OCI_BASE_TAG}:${OCI_BASE_TAG}
 tar cf ${OCI_BASE_NAME}-${OCI_BASE_TAG}.oci -C ${OCI_BASE_NAME}-${OCI_BASE_TAG} .
 rm -rf ${OCI_BASE_NAME}-${OCI_BASE_TAG}
 
-${BUILDAH} rm ${OCI_NAME} # --all # in production
-${BUILDAH} rmi ${OCI_NAME} # --all # in production
+echo "############################################"
+echo "##"
+echo "## Buildah from ${OCI_NAME} oci-archive:${OCI_BASE_NAME}-${OCI_BASE_TAG}.oci"
+echo "##"
+echo "############################################"
+${BUILDAH} rm --all # in CI
+${BUILDAH} rmi --all # in CI
 ${BUILDAH} from --name ${OCI_NAME} oci-archive:${OCI_BASE_NAME}-${OCI_BASE_TAG}.oci
 
-${BUILDAH} run ${OCI_NAME} -- mkdir /bob 
+${BUILDAH} run ${OCI_NAME} -- mkdir -p /bob 
 
-# Copy ${OCI_BASE_NAME}/${OCI_BASE_TAG} scripts and artifacts
+echo "############################################"
+echo "##"
+echo "## Buildah copy FROM ./bob/scripts/${OCI_BASE_NAME}/${OCI_BASE_TAG}/ TO /bob"
+echo "##"
+echo "############################################"
 ${BUILDAH} copy ${OCI_NAME} \
                 "./bob/scripts/${OCI_BASE_NAME}/${OCI_BASE_TAG}/" \
                 '/bob'

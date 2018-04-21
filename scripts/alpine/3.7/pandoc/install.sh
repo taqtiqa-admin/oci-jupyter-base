@@ -2,6 +2,8 @@
 
 # No Requires 
 
+for f in /etc/profile.d/*; do source $f; done
+
 apk add --no-cache --virtual .build-dependencies alpine-sdk libarchive-tools
 curl -Lsf 'https://github.com/jgm/pandoc/releases/download/1.17.2/pandoc-1.17.2-1-amd64.deb' \
     | bsdtar xOf - data.tar.gz \

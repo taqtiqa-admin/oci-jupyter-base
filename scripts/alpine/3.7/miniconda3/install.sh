@@ -43,7 +43,7 @@ chmod 777 "${BUILD_CONDA_DIR}/locks"
 #
 # Cleanup
 #
-rm "/root/.wget-hsts"
+rm -f "/root/.wget-hsts"
 # Remove bash history
 unset HISTFILE
 rm -f /root/.bash_history

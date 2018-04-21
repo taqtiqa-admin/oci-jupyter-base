@@ -24,7 +24,7 @@ ALPINE_GLIBC_I18N_PACKAGE_FILENAME="glibc-i18n-$ALPINE_GLIBC_PACKAGE_VERSION.apk
 #
 for f in /etc/profile.d/*; do source $f; done
 
-sed -i 's/unicode="NO"/unicode="YES"/g' /etc/rc.conf
+sed -i 's/#unicode="NO"/unicode="YES"/g' /etc/rc.conf
 
 cd /tmp 
 apk add --no-cache --virtual=.build-dependencies wget ca-certificates

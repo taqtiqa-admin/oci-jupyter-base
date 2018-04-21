@@ -2,7 +2,8 @@
 
 # No requires
 
-user_name=${1:-bob}
+OCI_USER=${OCI_USER:-bob}
+user_name=${1:-$OCI_USER}
 
 adduser -h /home/${user_name} -G 'wheel' -S -s /bin/ash ${user_name}
 passwd -d ${user_name}

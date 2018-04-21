@@ -2,8 +2,8 @@
 # Contributor: Isaac Dunham <ibid.ag@gmail.com>
 # Maintainer: William Pitcock <nenolod@dereferenced.org>
 pkgname=texlive
-pkgver=20170524
-pkgrel=5
+pkgver=20170524.0.0
+pkgrel=1
 pkgdesc="Comprehensive TeX document production system"
 url="http://tug.org/texlive/"
 arch="all"
@@ -16,8 +16,9 @@ makedepends="freetype-dev libpng-dev poppler-dev icu-dev harfbuzz-dev
 install=""
 triggers="$pkgname.trigger=/usr/share/texmf-dist"
 subpackages="$pkgname-dev $pkgname-doc xdvik:xdvi $pkgname-xetex:xetex $pkgname-luatex:lua $pkgname-dvi:dvi $pkgname-full:meta"
-source="ftp://ftp.tug.org/texlive/historic/${pkgver:0:4}/texlive-$pkgver-source.tar.xz"
-builddir="$srcdir"/texlive-${pkgver}-source
+srcpkgver=20170524
+source="ftp://ftp.tug.org/texlive/historic/${srcpkgver:0:4}/texlive-$srcpkgver-source.tar.xz"
+builddir="$srcdir"/texlive-${srcpkgver}-source
 
 _luatex="dvilualatex dviluatex lualollipop"
 _pdftex="amstex cslatex csplain eplain etex jadetex latex lollipop mex

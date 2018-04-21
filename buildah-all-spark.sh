@@ -29,9 +29,19 @@
 
 export OCI_NAME=${1:-oci-jupyter-all-spark}
 export OCI_AUTHOR="TAQTIQA LLC <coders@taqtiqa.com>"
-export OCI_TAG=$(date --utc +%Y%m%d.%H%M)
+export OCI_TAG=$(date --utc +%Y%m%d.%H)
 export OCI_BASE_NAME=alpine
 export OCI_BASE_TAG=3.7
+
+export OCI_USER=jovyan
+export OCI_USER_ID=1000
+export OCI_USER_GROUP_ID=100
+
+export OCI_ORG=taqtiqa.io
+export OCI_AUTHOR='TAQTIQA LLC'
+export OCI_EMAIL='coders@taqtiqa.com'
+export OCI_ARCH='amd64'
+export OCI_OS='linux'
 
 export OCI_DISTRIB_ID=alpine
 export OCI_DISTRIB_CODENAME=3.7
@@ -49,24 +59,28 @@ source ./scripts/buildah-import.sh
 
 echo "############################################"
 echo "##"
-echo "## Buildah ${OCI_NAME}"
+echo "## Buildah building ${OCI_NAME}"
 echo "##"
 echo "############################################"
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/setup.sh
+${BUILDAH} run ${OCI_NAME} -- sh /bob/sudo/install.sh             # Done
+${BUILDAH} run ${OCI_NAME} -- sh /bob/user/install.sh ${OCI_USER} # Done
+${BUILDAH} run ${OCI_NAME} -- sh /bob/apk/install.sh              # Done
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/glibc/install.sh
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/miniconda3/install.sh
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/install.sh
-${BUILDAH} run ${OCI_NAME} -- sh /bob/pandoc/install.sh
-${BUILDAH} run ${OCI_NAME} -- sh /bob/aports/install.sh
-${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/minimal.sh
-${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/scipy.sh
-${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/r.sh
-${BUILDAH} run ${OCI_NAME} -- sh /bob/hashicorp/consul/install.sh
-${BUILDAH} run ${OCI_NAME} -- sh /bob/hashicorp/nomad/install.sh
-${BUILDAH} run ${OCI_NAME} -- sh /bob/hashicorp/spark/install.sh
-${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/pyspark.sh
-${BUILDAH} run ${OCI_NAME} -- sh /bob/cleanup.sh
-${BUILDAH} run ${OCI_NAME} -- rm -rf /bob
+${BUILDAH} run ${OCI_NAME} -- sh /bob/pandoc/install.sh           # Done
+${BUILDAH} run ${OCI_NAME} -- sh /bob/aports/install.sh           # 
+${BUILDAH} run ${OCI_NAME} -- sh /bob/texlive/install.sh/bo       # 
+${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/minimal.sh          # 
+${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/scipy.sh            # 
+${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/r.sh                # 
+${BUILDAH} run ${OCI_NAME} -- sh /bob/hashicorp/consul/install.sh # 
+${BUILDAH} run ${OCI_NAME} -- sh /bob/hashicorp/nomad/install.sh  # 
+${BUILDAH} run ${OCI_NAME} -- sh /bob/hashicorp/spark/install.sh  # 
+${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/pyspark.sh          # 
+${BUILDAH} run ${OCI_NAME} -- sh /bob/cleanup.sh                  # 
+${BUILDAH} run ${OCI_NAME} -- rm -rf /bob                         # 
 
 
 ${BUILDAH} config --author="${OCI_AUTHOR}" \

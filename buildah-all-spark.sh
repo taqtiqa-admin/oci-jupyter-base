@@ -24,13 +24,12 @@
 # 2) docker2aci 
 
 # Usage:
-#   ./buildda.sh container-name
+#   ./buildah.sh container-name
 #
 
-
-export OCI_NAME=${1:-oci-jupyter-base}
+export OCI_NAME=${1:-oci-jupyter-all-spark}
 export OCI_AUTHOR="TAQTIQA LLC <coders@taqtiqa.com>"
-export OCI_TAG=$(date --utc +%Y%m%d)
+export OCI_TAG=$(date --utc +%Y%m%d.%H%M)
 export OCI_BASE_NAME=alpine
 export OCI_BASE_TAG=3.7
 
@@ -57,8 +56,18 @@ ${BUILDAH} run ${OCI_NAME} -- sh /bob/setup.sh
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/glibc/install.sh
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/miniconda3/install.sh
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/install.sh
+${BUILDAH} run ${OCI_NAME} -- sh /bob/pandoc/install.sh
+${BUILDAH} run ${OCI_NAME} -- sh /bob/aports/install.sh
+${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/minimal.sh
+${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/scipy.sh
+${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/r.sh
+${BUILDAH} run ${OCI_NAME} -- sh /bob/hashicorp/consul/install.sh
+${BUILDAH} run ${OCI_NAME} -- sh /bob/hashicorp/nomad/install.sh
+${BUILDAH} run ${OCI_NAME} -- sh /bob/hashicorp/spark/install.sh
+${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/pyspark.sh
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/cleanup.sh
 ${BUILDAH} run ${OCI_NAME} -- rm -rf /bob
+
 
 ${BUILDAH} config --author="${OCI_AUTHOR}" \
         --shell="/bin/bash -E" \

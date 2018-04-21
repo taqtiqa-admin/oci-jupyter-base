@@ -62,16 +62,20 @@ echo "##"
 echo "## Buildah building ${OCI_NAME}"
 echo "##"
 echo "############################################"
+
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/setup.sh
-${BUILDAH} run ${OCI_NAME} -- sh /bob/sudo/install.sh             # Done
+# Build+install packages not in Alpine main or community repositories
+${BUILDAH} run ${OCI_NAME} -- sh /bob/aports/install.sh           # 
+${BUILDAH} run ${OCI_NAME} -- sh /bob/user/aportser.sh            # 
+${BUILDAH} run ${OCI_NAME} -- sh /bob/texlive/install.sh          # 
+
+# ${BUILDAH} run ${OCI_NAME} -- sh /bob/sudo/install.sh             # Done
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/user/install.sh ${OCI_USER} # Done
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/apk/install.sh              # Done
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/glibc/install.sh
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/miniconda3/install.sh
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/install.sh
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/pandoc/install.sh           # Done
-${BUILDAH} run ${OCI_NAME} -- sh /bob/aports/install.sh           # 
-${BUILDAH} run ${OCI_NAME} -- sh /bob/texlive/install.sh/bo       # 
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/minimal.sh          # 
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/scipy.sh            # 
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/r.sh                # 

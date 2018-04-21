@@ -64,6 +64,8 @@ echo "## Buildah building ${OCI_NAME}"
 echo "##"
 echo "############################################"
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/setup.sh
+# Build+install packages not in Alpine main or community repositories
+# None for buildah-base
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/sudo/install.sh             
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/user/install.sh ${OCI_USER} 
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/apk/install.sh              

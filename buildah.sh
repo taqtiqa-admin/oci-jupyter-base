@@ -47,7 +47,11 @@ source ./scripts/buildah-import.sh
 
 # ${BUILDAH} run --tty ${OCI_NAME} /bin/sh
 
-# Run build scripts
+echo "############################################"
+echo "##"
+echo "## Buildah ${OCI_NAME}"
+echo "##"
+echo "############################################"
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/setup.sh
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/glibc/install.sh
 ${BUILDAH} run ${OCI_NAME} -- sh /bob/miniconda3/install.sh

@@ -21,15 +21,15 @@ echo "##"
 echo "## Buildah commit ${OCI_NAME} ${OCI_NAME}"
 echo "##"
 echo "############################################"
-# Commit changes to OCI layout 
 OCI_CID=$(${BUILDAH} commit ${OCI_NAME} ${OCI_NAME}) #add -rm in production
+
 echo "############################################"
 echo "##"
 echo "## Buildah push ${OCI_NAME} oci-archive:${OCI_NAME}.oci:${OCI_TAG}"
 echo "##"
 echo "############################################"
-# Export to OCI format in the local directory.
 OCI_ID=$(${BUILDAH} push ${OCI_NAME} oci-archive:${OCI_NAME}.oci:${OCI_TAG})
+
 echo "############################################"
 echo "##"
 echo "## Buildah push ${OCI_NAME} docker-archive:${OCI_NAME}.docker:${OCI_NAME}"
@@ -64,7 +64,7 @@ cat <<EOF >${HOME}/.docker/config.json
 }
 EOF
 
-# Conversion step creates ${OCI_NAME}.aci
+# Make files readable to skopeo, rkt actool
 chown $(whoami) ${OCI_NAME}.oci
 chown $(whoami) ${OCI_NAME}.docker
 
@@ -76,8 +76,14 @@ echo "############################################"
 
 ${SKOPEO} copy docker-archive:${OCI_NAME}.docker docker://${DOCKER_ORG}/${OCI_NAME}:${OCI_TAG}
 
+echo "############################################"
+echo "##"
+echo "## Rkt fetch docker://${DOCKER_ORG}/${OCI_NAME}:${OCI_TAG}"
+echo "##"
+echo "############################################"
 RKT_IMAGE_NAME="registry-1.docker.io/${DOCKER_ORG}/${OCI_NAME}:${OCI_TAG}"
 ${RKT} fetch --insecure-options=image docker://${DOCKER_ORG}/${OCI_NAME}:${OCI_TAG}
+
 echo "############################################"
 echo "##"
 echo "## Rkt image export ${RKT_IMAGE_NAME} ${OCI_NAME}-${OCI_TAG}.aci"

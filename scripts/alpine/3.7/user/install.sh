@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 
-# No requires
+# No Requires
+
+for f in /etc/profile.d/*; do source $f; done
 
 OCI_USER=${OCI_USER:-bob}
 user_name=${1:-$OCI_USER}

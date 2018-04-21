@@ -2,9 +2,9 @@
 #
 # No Requires
 
-echo $(whoami)
+for f in /etc/profile.d/*; do source $f; done
 
-DEFAULT_CONDA_USER=jovyan
+DEFAULT_CONDA_USER=${OCI_USER:-jovyan}
 DEFAULT_CONDA_DIR=/opt/conda
 DEFAULT_MINICONDA_VERSION='4.3.30'
 

@@ -1,3 +1,5 @@
-*.oci
 *.aci
-scripts
+*.docker
+*.oci
+docker2aci
+skopeo

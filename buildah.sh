@@ -27,45 +27,33 @@
 #   ./buildda.sh container-name
 #
 
+
+export OCI_NAME=${1:-oci-jupyter-base}
 export OCI_AUTHOR="TAQTIQA LLC <coders@taqtiqa.com>"
+export OCI_TAG=$(date --utc +%Y%m%d)
 export OCI_BASE_NAME=alpine
 export OCI_BASE_TAG=3.7
-export OCI_NAME=${1:-oci-jupyter-base}
-export OCI_TAG=$(date --utc +%Y%m%d)
 
 export OCI_DISTRIB_ID=alpine
 export OCI_DISTRIB_CODENAME=3.7
 
+export DOCKER_ORG=taqtiqa
+
 export BUILDAH="sudo $(which buildah)"
-
-source ./bob/scripts/${OCI_DISTRIB_ID}/${OCI_DISTRIB_CODENAME}/setup.sh
-
-#
-# Fetch the base image in OCI format
-# 
-${BUILDAH} rm ${OCI_NAME}
-${BUILDAH} rmi ${OCI_NAME}
-${BUILDAH} from --name ${OCI_NAME} docker://${OCI_BASE_NAME}:${OCI_BASE_TAG}
+export SKOPEO="$(which skopeo)"
+export RKT="sudo $(which rkt)"
+export ACTOOL="$(which actool)"
+source ./scripts/buildah-import.sh
 
 # ${BUILDAH} run --tty ${OCI_NAME} /bin/sh
 
-${BUILDAH} run ${OCI_NAME} -- mkdir /bob 
-
-# Copy ${OCI_BASE_NAME}/${OCI_BASE_TAG} scripts and artifacts
-${BUILDAH} copy ${OCI_NAME} \
-                "./bob/scripts/${OCI_BASE_NAME}/${OCI_BASE_TAG}/" \
-                '/bob'
-
 # Run build scripts
-# - glibc
-# - miniconda3
-# - jupyter
-${BUILDAH} run ${OCI_NAME} -- sh /bob/setup.sh && \
-${BUILDAH} run ${OCI_NAME} -- sh /bob/glibc/install.sh && \
-${BUILDAH} run ${OCI_NAME} -- sh /bob/miniconda3/install.sh && \
-${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/install.sh && \
-${BUILDAH} run ${OCI_NAME} -- sh /bob/cleanup.sh && \
-${BUILDAH} run ${OCI_NAME} -- rm -rf /bob 
+${BUILDAH} run ${OCI_NAME} -- sh /bob/setup.sh
+${BUILDAH} run ${OCI_NAME} -- sh /bob/glibc/install.sh
+${BUILDAH} run ${OCI_NAME} -- sh /bob/miniconda3/install.sh
+${BUILDAH} run ${OCI_NAME} -- sh /bob/jupyter/install.sh
+${BUILDAH} run ${OCI_NAME} -- sh /bob/cleanup.sh
+${BUILDAH} run ${OCI_NAME} -- rm -rf /bob
 
 ${BUILDAH} config --author="${OCI_AUTHOR}" \
         --shell="/bin/bash -E" \
@@ -74,15 +62,4 @@ ${BUILDAH} config --author="${OCI_AUTHOR}" \
         --port=8888/tcp \
         --entrypoint="/usr/local/bin/start.sh jupyter lab" ${OCI_NAME}
 
-# Commit changes to OCI layout 
-${BUILDAH} commit ${OCI_NAME} ${OCI_NAME} #add -rm in production
-# Export to OCI format in the local directory.
-${BUILDAH} push ${OCI_NAME} oci-archive:${OCI_NAME}:${OCI_TAG}
-
-# Conversion step creates ${OCI_NAME}.aci
-sudo chown $(whoami) ${OCI_NAME}
-#  Output filename pattern:
-# library-${OCI_NAME}-${OCI_TAG}.aci
-./docker2aci -image=${OCI_NAME}:${OCI_TAG} ${OCI_NAME}
-rm ${OCI_NAME}
-find ./ -name "*${OCI_NAME}-${OCI_TAG}.aci" -exec mv {}  ${OCI_NAME}-${OCI_TAG}.aci  \;
+source ./scripts/buildah-export.sh

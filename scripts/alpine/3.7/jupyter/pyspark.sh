@@ -10,17 +10,16 @@
 # - aports/install.sh
 # - jupyter/minimal.sh
 # - jupyter/scipy.sh
-# - jupyter/r.sh
-# #- hashicorp/consul/install.sh
-# #- hashicorp/nomad/install.sh
-# #- hashicorp/spark/install.sh
+# - hashicorp/consul/install.sh
+# - hashicorp/nomad/install.sh
+# - hashicorp/spark/install.sh
 
 # TODO: Nomad-Spark 
 # https://github.com/hashicorp/nomad-spark
 # https://github.com/hashicorp/nomad/blob/master/terraform/examples/spark/docker/spark/Dockerfile
 # https://github.com/djenriquez/nomad/blob/master/Dockerfile
 # 
-# Spark is integrated with mesos. Whic is heavy - the official mesos only 
+# Spark is integrated with mesos. Which is heavy - the official mesos only 
 # containers are approx 465MB.  The Nomad+Consul only containers are approx 33MB. 
 # A factor of ten difference.  This would allow the ACI/OCI images to be distributed 
 # via Github, which has a 2GB limit on artifacts.
@@ -29,9 +28,10 @@
 # Load required env variables: build is in OCI/ACI shell session
 #
 
-echo "export APACHE_SPARK_VERSION=2.3.0" > /etc/profile.d/spark.sh
+echo "export APACHE_SPARK_VERSION=2.3.0" >> /etc/profile.d/spark.sh
 echo "export HADOOP_VERSION=2.7" >> /etc/profile.d/spark.sh
-
+echo "export PYTHONPATH=${SPARK_HOME}/python:${SPARK_HOME}/python/lib/py4j-0.10.6-src.zip"
+echo "SPARK_OPTS='--driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info'"
 for f in /etc/profile.d/*; do source $f; done
 
 apk update
@@ -51,7 +51,7 @@ cd /tmp
 cd /usr/local 
   ln -s spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} spark
 
-# Upstream installs mesos for use with spark.
+# Upstream (Jupyter) installs mesos for use with spark.
 # Here we use Nomad + Spark - perhaps more elegant, seemingly lighter
 # Sizes come from official Docker Hub for Mesosphere and Hahicorp(Cosul)
 # https://hub.docker.com/r/djenriquez/nomad/
@@ -59,3 +59,8 @@ cd /usr/local
 # Mesos (Master+slave) v1.5.0: 465 MB | 18 + 15 = 33 MB Nomad + Consul (1.0.7)
 # Mesos (Master)       v1.5.0: 465 MB | 
 # Mesos (Slave)        v1.5.0: 465 MB | 
+
+# Install pyarrow
+conda install --quiet -y 'pyarrow'
+fix-permissions ${CONDA_DIR} 
+fix-permissions /home/${NB_USER}

@@ -1,6 +1,11 @@
 #!/usr/bin/env sh
 
 # No Requires
+echo "############################################"
+echo "##"
+echo "## Bob: ${0}"
+echo "##"
+echo "############################################"
 
 export OCI_USER=${OCI_USER:-jovyan}
 export OCI_USER_ID=${OCI_USER_ID:-1000}

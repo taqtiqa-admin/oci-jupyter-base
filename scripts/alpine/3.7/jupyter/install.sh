@@ -52,6 +52,14 @@ conda install --quiet --yes \
               'jupyterlab=0.31.*' \
               'tornado=4.*'
 jupyter labextension install @jupyterlab/hub-extension@^0.8.0 
+
+src=/bob/jupyter/artifacts/usr/local/bin
+dest=/usr/local/bin
+cp ${src}/start.sh ${dest}/start.sh
+cp ${src}/start-singleuser.sh ${dest}/start-singleuser.sh
+cp ${src}/start-notebook.sh ${dest}/start-notebook.sh
+cp ${src}/jupyter_notebook_config.py ${dest}/jupyter_notebook_config.py
+
 conda clean -tipsy
 npm cache clean 
 rm -rf ${CONDA_DIR}/share/jupyter/lab/staging
